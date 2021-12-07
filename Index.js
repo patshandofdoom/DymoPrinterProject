@@ -6,6 +6,14 @@ function printupdate(){
     labelImage.src = "data:image/png;base64," + pngData;
 }
 
+function desciprtionTooLong(){
+    if(document.getElementById('lab_description').value.length>25){
+        return "Refer to Google Sheet"
+    }else{
+        return document.getElementById('lab_description').value.toUpperCase()
+    }
+}
+
 //this function updates the XML by grabbing all the info from the form and re-formatting
 function updateXML(){
     return '<?xml version="1.0" encoding="utf-8"?>\
@@ -68,7 +76,7 @@ function updateXML(){
                 <String>'+dateConstructor()+'\n'
                 +document.getElementById('patient_name').value.toUpperCase()+'\n'
                 +document.getElementById('appliance_type').value.toUpperCase()+'\n'
-                +document.getElementById('lab_description').value.toUpperCase()+'\n'
+                +desciprtionTooLong()+'\n'
                 +dateToNA(document.getElementById('scan_date').value)+'\n'
                 +dateToNA(document.getElementById('insert_date').value)+'\n'
                 +document.getElementById('doctor').value.toUpperCase()+'\n'
@@ -86,6 +94,7 @@ function updateXML(){
 }
 
 //A short function to check if the dates are defined or not. If they are not, returns "na"
+//This function specifically for the "insert date" and "scan date" fields, which are allowed to be left blank
 function dateToNA(passedInValue){
     if(passedInValue==""){
         return "N/A"
@@ -103,6 +112,7 @@ function dateConstructor(date){
         day = "0"+day;
     }
     let month = date.getMonth();
+    month++
     if (month<10){
         month = "0"+month;
     }
@@ -124,6 +134,8 @@ function dateConstructor(date){
 //some function here to save the form data to the google sheet
 function saveDataToSheet(){
     let storageObject = convertDataToObject();
+    //function added here in google that calls the server and writes to the sheet
+    //google.script.run.submitTheData(storageObject);
     console.log(storageObject);
 }
 
@@ -146,8 +158,19 @@ function convertDataToObject(){
     return infoToStore
 }
 
+//The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
+$("#patientData").submit(function(e) {
+    e.preventDefault(); // <==stop page refresh==>
+    saveDataToSheet();
+    console.log("Submitted");
+});
+
 //this function is for the print button, it first saves the data, then prints it on the printer
 function printAndSave(){
+    if(rejectIfBlanks()=="incomplete"){
+        alert("Some required fields not filled out");
+        return;
+    };
     //some function here to save the data 
     saveDataToSheet();
 
@@ -164,6 +187,14 @@ function printAndSave(){
         alert(e.message || e);
         console.log(e.message)
     }
+}
+
+function rejectIfBlanks(){
+    var jsonObject = convertDataToObject();
+    if(jsonObject.patientName==""||jsonObject.staffInitials==""||jsonObject.labDescription==""){
+        return "incomplete"
+    }
+    return "complete"
 }
 
 //This function updates the preview on the page, allowing the user to get a view of what their label will look like

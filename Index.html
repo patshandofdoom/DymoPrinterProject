@@ -132,7 +132,7 @@
                 printupdate();
             });
 
-            //Small function that runs to populate the appliance list so that it didnt have to be hard coded.
+            //A function that populates the appliance list so that it didnt have to be hard coded.
             function populateAppliance(){
                 let selectString = "";
                 for(var i=0; i<applianceType.length;i++){
@@ -141,34 +141,6 @@
                 $("#appliance_type").append(selectString);
             }
 
-            //The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
-            $("#patientData").submit(function(e) {
-                e.preventDefault(); // <==stop page refresh==>
-
-                console.log("Submitted");
-                /*
-                let storageDate = dateConstructor();
-                let patientName = document.getElementById('patient_name').value.toUpperCase();
-                let applianceType = document.getElementById('appliance_type').value.toUpperCase();
-                let labDescription = document.getElementById('lab_description').value.toUpperCase();
-                let scanDate = dateToNA(document.getElementById('scan_date').value);
-                let insertDate = dateToNA(document.getElementById('insert_date').value);
-                let doctorInitials = document.getElementById('doctor').value.toUpperCase();
-                let staffInitials = document.getElementById('staff_initials').value.toUpperCase();
-
-                let infoToStore={"storageDate":storageDate,"patientName":patientName,"applianceType":applianceType,"labDescription":labDescription,
-                    "scanDate":scanDate,"insertDate":insertDate,"doctorInitials":doctorInitials,"staffInitials":staffInitials};
-                */
-            });
-
-            function rejectIfBlanks(){
-                
-            }
-
-            //the print function runs the printer function
-            //function print(){
-            //    onload("yes");
-            //}
         </script>
 
     </body>
