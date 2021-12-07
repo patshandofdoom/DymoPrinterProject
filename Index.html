@@ -22,7 +22,7 @@
     <body>
         <div class="container" id="overall_container">
             <div class="row col s12" id="dental_picture">
-                <img src="https://i.imgur.com/qLZaqj5.jpg">
+                <img src="https://i.imgur.com/qLZaqj5.jpg" width="300" height="200">
             </div>
             <div class="row col s12">
                 <h3>Official Mad Ped Lab Form</h3>
@@ -113,6 +113,7 @@
         <script>
             //List of appliances provided by the dental team
             const applianceType = ["1x1","3x3", "BAND AND LOOP", "BLEACH TRAYS", "CARRIERE", "DISTAL JET (SEND OUT)", "FLEA", "FLIPPER", "GELB", "DISTAL SHOE", "HALTERMAN","HAWLEY/U","HAWLEY/L","HAWLEY U/L","IDB","LBB","LEXAN","LEXAN SAME DAY","LLHA","MARA (SEND OUT)","MARA W/ IDB","MOUTHGUARD","NANCE","PEDO PARTIAL","PENDEX","PENDULUM","QUAD","REPAIR","RPE","RPE W/ RPHG HOOKS","RPE W/ CRIB","RYAN ALIGNER","SPACE MAINTAINER","SPLINT","SPRING/U","SPRING/L","SPRING U/L","SS ALIGNGERS (INITIAL)","SS ALIGNERS (REFINEMENT)","STUDY MODELS","THUMB CRIB","TPA","T-RET","T-REX (SEND OUT)","TPA W/RPHG","WRAP"]
+            const referenceNumber = 
             
             //initializing functiion. There are more scripts initialized in the attached script as well
             $(document).ready(function() {
@@ -141,6 +142,51 @@
                 $("#appliance_type").append(selectString);
             }
 
+            //The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
+            $("#patientData").submit(function(e) {
+                e.preventDefault(); // <==stop page refresh==>
+                saveDataToSheet();
+                console.log("Submitted");
+            });
+
+            //this function is for the print button, it first saves the data, then prints it on the printer
+            function printAndSave(){
+                if(rejectIfBlanks()=="incomplete"){
+                    alert("Some required fields not filled out");
+                    return;
+                };
+                //some function here to save the data 
+                saveDataToSheet();
+
+                var printer = loadPrinters();
+                if (!printer){return}
+                testAddressLabelXml = updateXML();
+                label = dymo.label.framework.openLabelXml(testAddressLabelXml);
+                try
+                {               
+                    label.print(printer);
+                }
+                catch(e)
+                {
+                    alert(e.message || e);
+                    console.log(e.message)
+                }
+            }
+
+            //some function here to save the form data to the google sheet
+            function saveDataToSheet(){
+                let storageObject = convertDataToObject();
+                //function added here in google that calls the server and writes to the sheet
+                google.script.run
+                .withSuccessHandler(successfulStorage())
+                .withFailureHandler(function(){alert("Something Went Wrong: please check the executions log for more info")})
+                .submitTheData(storageObject);
+            }
+
+            function successfulStorage(){
+              alert("Data Submitted Successfully");
+              location.reload();
+            }
         </script>
 
     </body>

@@ -131,13 +131,6 @@ function dateConstructor(date){
     return year+"-"+month+"-"+day+" "+hour+":"+minutes+" "+ampm;
 }
 
-//some function here to save the form data to the google sheet
-function saveDataToSheet(){
-    let storageObject = convertDataToObject();
-    //function added here in google that calls the server and writes to the sheet
-    //google.script.run.submitTheData(storageObject);
-    console.log(storageObject);
-}
 
 function convertDataToObject(){
     let storageDate = dateConstructor();
@@ -158,36 +151,7 @@ function convertDataToObject(){
     return infoToStore
 }
 
-//The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
-$("#patientData").submit(function(e) {
-    e.preventDefault(); // <==stop page refresh==>
-    saveDataToSheet();
-    console.log("Submitted");
-});
 
-//this function is for the print button, it first saves the data, then prints it on the printer
-function printAndSave(){
-    if(rejectIfBlanks()=="incomplete"){
-        alert("Some required fields not filled out");
-        return;
-    };
-    //some function here to save the data 
-    saveDataToSheet();
-
-    var printer = loadPrinters();
-    if (!printer){return}
-    testAddressLabelXml = updateXML();
-    label = dymo.label.framework.openLabelXml(testAddressLabelXml);
-     try
-    {               
-        label.print(printer);
-    }
-    catch(e)
-    {
-        alert(e.message || e);
-        console.log(e.message)
-    }
-}
 
 function rejectIfBlanks(){
     var jsonObject = convertDataToObject();
