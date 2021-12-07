@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Official Mad Ped Lab Form</title>
+        <!--<script src="http://labelwriter.com/software/dls/sdk/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"></script>-->
+        <script src="./DymoJSMin.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+        <script src="./Index.js"></script>
+
+        <style>
+            input{text-transform:uppercase;}
+            div{text-align: center;}
+            .form_container{border:3px;border-style: round;}
+        </style>
+    </head>
+
+    <body>
+        <div class="container" id="overall_container">
+            <div class="row col s12" id="dental_picture">
+                <img src="https://i.imgur.com/qLZaqj5.jpg">
+            </div>
+            <div class="row col s12">
+                <h3>Official Mad Ped Lab Form</h3>
+            </div>
+            <div class="row col s12" id="form_container">
+                <form id="patientData">
+                    <div class="row col s12">
+                        PLEAE FILL OUT ALL INFORMATION BELOW
+                    </div>
+                    <div class="row" style="align-items: center;">
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">person</i>
+                            <input type="text" id="patient_name" name="patient_name" class="validate" required>
+                            <label for="patient_name">Patient Name</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">local_hospital</i>
+                            <input type="text" id="staff_initials" name="staff_initials" class="validate" required>
+                            <label for="staff_initials">Staff Initials</label>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select class="doctor" name="doctor" id="doctor">
+                                <option value="" disabled selected>Select Doctor</option>
+                                <option value="TW">TW</option>
+                                <option value="GW">GW</option>
+                                <option value="BB">BB</option>
+                                <option value="JC">JC</option>
+                                <option value="NJ">NJ</option>
+                            </select>
+                            <label>Select Doctor</label>
+
+                        </div>
+                        <div class="input-field col s6">
+                            <select name="appliance_type" name="appliance_type" id="appliance_type">
+                                <option value="" disabled selected>Select Appliance</option>
+                            </select>
+                            <label>Select Appliance</label>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">library_books</i>
+                            <input id="lab_description" type="text" class="validate" required>
+                            <label for="lab_description">Detailed Lab Description</label>
+                            <span class="helper-text">(Retainer Color, Bracket Rx, Bracket Torque, Pontic Shade, Mail Appl.) or Type "NA"</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">date_range</i>
+                            <input type="date" id="scan_date" name="scan_date">
+                            <label for="scan_date">Scan Date (if applicable)</label>
+                        </div>
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">date_range</i>
+                            <input type="date" id="insert_date" name="insert_date">
+                            <label for="insert_date">Insert Date</label>
+
+                        </div>
+                    </div>
+                    <div class="row col s12">
+                        <div class="col s6">
+                            <button class="waves-effect waves-light btn" type="submit">Send to Sheet
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                        <div class="col s6">
+                            <button class="waves-effect waves-light btn" onclick="printAndSave()" type="button">Send and Print
+                                <i class="material-icons right">local_printshop</i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <img id="labelImage" src="" alt="label preview" style="border-style: solid;">
+                </div>
+            </div>
+        </div>
+        <script>
+            //List of appliances provided by the dental team
+            const applianceType = ["1x1","3x3", "BAND AND LOOP", "BLEACH TRAYS", "CARRIERE", "DISTAL JET (SEND OUT)", "FLEA", "FLIPPER", "GELB", "DISTAL SHOE", "HALTERMAN","HAWLEY/U","HAWLEY/L","HAWLEY U/L","IDB","LBB","LEXAN","LEXAN SAME DAY","LLHA","MARA (SEND OUT)","MARA W/ IDB","MOUTHGUARD","NANCE","PEDO PARTIAL","PENDEX","PENDULUM","QUAD","REPAIR","RPE","RPE W/ RPHG HOOKS","RPE W/ CRIB","RYAN ALIGNER","SPACE MAINTAINER","SPLINT","SPRING/U","SPRING/L","SPRING U/L","SS ALIGNGERS (INITIAL)","SS ALIGNERS (REFINEMENT)","STUDY MODELS","THUMB CRIB","TPA","T-RET","T-REX (SEND OUT)","TPA W/RPHG","WRAP"]
+            
+            //initializing functiion. There are more scripts initialized in the attached script as well
+            $(document).ready(function() {
+                populateAppliance();
+                M.updateTextFields();
+                $('.datepicker').datepicker();
+                $('select').formSelect();
+                printupdate();
+                
+            });
+            
+            //when any of the inputs are changed, we run the preview update function with the new data
+            $("select").change(function() {
+                printupdate();
+            });
+            $("input").change(function() {
+                printupdate();
+            });
+
+            //Small function that runs to populate the appliance list so that it didnt have to be hard coded.
+            function populateAppliance(){
+                let selectString = "";
+                for(var i=0; i<applianceType.length;i++){
+                    selectString+= '<option value="'+applianceType[i]+'">'+applianceType[i]+'</option>'
+                }
+                $("#appliance_type").append(selectString);
+            }
+
+            //The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
+            $("#patientData").submit(function(e) {
+                e.preventDefault(); // <==stop page refresh==>
+
+                console.log("Submitted");
+                /*
+                let storageDate = dateConstructor();
+                let patientName = document.getElementById('patient_name').value.toUpperCase();
+                let applianceType = document.getElementById('appliance_type').value.toUpperCase();
+                let labDescription = document.getElementById('lab_description').value.toUpperCase();
+                let scanDate = dateToNA(document.getElementById('scan_date').value);
+                let insertDate = dateToNA(document.getElementById('insert_date').value);
+                let doctorInitials = document.getElementById('doctor').value.toUpperCase();
+                let staffInitials = document.getElementById('staff_initials').value.toUpperCase();
+
+                let infoToStore={"storageDate":storageDate,"patientName":patientName,"applianceType":applianceType,"labDescription":labDescription,
+                    "scanDate":scanDate,"insertDate":insertDate,"doctorInitials":doctorInitials,"staffInitials":staffInitials};
+                */
+            });
+
+            function rejectIfBlanks(){
+                
+            }
+
+            //the print function runs the printer function
+            //function print(){
+            //    onload("yes");
+            //}
+        </script>
+
+    </body>
+</html>
