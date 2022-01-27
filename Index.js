@@ -78,7 +78,7 @@ function updateXML(){
           +document.getElementById('patient_name').value.toUpperCase()+'\n'
           +document.getElementById('appliance_type').value.toUpperCase()+'\n'
           +desciprtionTooLong()+'\n'
-          +dateToNA(document.getElementById('scan_date').value)+'\n'
+          +dateToNA(document.getElementById('scan_date').value)+" "+document.getElementById('scan_time').value+'\n'
           +dateToNA(document.getElementById('insert_date').value)+'\n'
           +document.getElementById('doctor').value.toUpperCase()+'\n'
           +document.getElementById('staff_initials').value.toUpperCase()+'</String>\
@@ -177,6 +177,7 @@ function convertDataToObject(){
     let applianceType = document.getElementById('appliance_type').value.toUpperCase();
     let labDescription = document.getElementById('lab_description').value.toUpperCase();
     let scanDate = dateToNA(document.getElementById('scan_date').value);
+    let scanTime = document.getElementById('scan_time').value;
     let insertDate = dateToNA(document.getElementById('insert_date').value);
     let doctorInitials = document.getElementById('doctor').value.toUpperCase();
     let staffInitials = document.getElementById('staff_initials').value.toUpperCase();
@@ -184,9 +185,8 @@ function convertDataToObject(){
         console.log("missing data")
     }
 
-    let infoToStore={"storageDate":storageDate,"patientName":patientName,"applianceType":applianceType,"labDescription":labDescription,
-        "scanDate":scanDate,"insertDate":insertDate,"doctorInitials":doctorInitials,"staffInitials":staffInitials};
-
+    let infoToStore={"storageDate":storageDate,"patientName":patientName,"applianceType":applianceType,"labDescription":labDescription,"scanDate":scanDate,"insertDate":insertDate,"doctorInitials":doctorInitials,"staffInitials":staffInitials,"scanTime":scanTime};
+    console.log(infoToStore)
     return infoToStore
 }
 

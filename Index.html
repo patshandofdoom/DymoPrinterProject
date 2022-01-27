@@ -2,20 +2,63 @@
 <html>
     <head>
         <title>Official Mad Ped Lab Form</title>
-        <!--<script src="http://labelwriter.com/software/dls/sdk/js/dymo.connect.framework.js" type="text/javascript" charset="UTF-8"></script>-->
-        <script src="./DymoJSMin.js"></script>
-
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+        <?!=include('printScripts');?>
+        <?!=include('Dymo');?>
         <script src="./Index.js"></script>
+        <script src="./DymoJSMin.js"></script>
 
         <style>
             input{text-transform:uppercase;}
             div{text-align: center;}
             .form_container{border:3px;border-style: round;}
+            /* The snackbar - position it at the bottom and in the middle of the screen */
+            #snackbar {
+                visibility: hidden; /* Hidden by default. Visible on click */
+                min-width: 250px; /* Set a default minimum width */
+                margin-left: -125px; /* Divide value of min-width by 2 */
+                background-color: #333; /* Black background color */
+                color: #fff; /* White text color */
+                text-align: center; /* Centered text */
+                border-radius: 2px; /* Rounded borders */
+                padding: 16px; /* Padding */
+                position: fixed; /* Sit on top of the screen */
+                z-index: 1; /* Add a z-index if needed */
+                left: 50%; /* Center the snackbar */
+                bottom: 30px; /* 30px from the bottom */
+            }
+            /* Show the snackbar when clicking on a button (class added with JavaScript) */
+            #snackbar.show {
+            visibility: visible; /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+            However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            }
+
+            /* Animations to fade the snackbar in and out */
+            @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+            }
+
+            @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+            }
+
+            @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+            }
+
+            @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+            }
         </style>
     </head>
 
@@ -28,7 +71,7 @@
                 <h3>Official Mad Ped Lab Form</h3>
             </div>
             <div class="row col s12" id="form_container">
-                <form id="patientData">
+                <form id="patientData" name="input" action="#" method="get">
                     <div class="row col s12">
                         PLEASE FILL OUT ALL INFORMATION BELOW
                     </div>
@@ -48,7 +91,7 @@
                     <div class="row">
                         <div class="input-field col s6">
                             <select class="doctor" name="doctor" id="doctor">
-                                <option value="" disabled selected>Select Doctor</option>
+                                <option value="Select Doctor" disabled selected>Select Doctor</option>
                                 <option value="TW">TW</option>
                                 <option value="GW">GW</option>
                                 <option value="BB">BB</option>
@@ -59,8 +102,12 @@
 
                         </div>
                         <div class="input-field col s6">
+                            <? const applianceType = getApplications(); Logger.log(applianceType); ?>
                             <select name="appliance_type" name="appliance_type" id="appliance_type">
                                 <option value="" disabled selected>Select Appliance</option>
+                                <? for(var i=0; i<applianceType.length; i++){ ?>
+                                  <option value=<?=applianceType[i]?> ><?= applianceType[i] ?></option>
+                                <? }; Logger.log(applianceType[i])?>
                             </select>
                             <label>Select Appliance</label>
 
@@ -77,27 +124,40 @@
                     </div>
 
                     <div class="row">
-                        <div class="input-field col s6">
+                        <div class="input-field col s4">
                             <i class="material-icons prefix">date_range</i>
                             <input type="date" id="scan_date" name="scan_date">
                             <label for="scan_date">Scan Date (if applicable)</label>
                         </div>
-                        <div class="input-field col s6">
+                        <div class="input-field col s3">
+                            <i class="material-icons prefix">access_time</i>
+                            <input type="text" class="timepicker" id="scan_time">
+                            <label for="scan_time">Scan Time</label>
+                        </div>
+                        <div class="input-field col s4">
                             <i class="material-icons prefix">date_range</i>
                             <input type="date" id="insert_date" name="insert_date">
                             <label for="insert_date">Insert Date</label>
 
                         </div>
+
                     </div>
                     <div class="row col s12">
-                        <div class="col s6">
-                            <button class="waves-effect waves-light btn" type="submit">Send to Sheet
+                        <div class="col s4">
+                            <button class="waves-effect waves-light btn" id="basicSubmit" type="submit">Send to Sheet
                                 <i class="material-icons right">send</i>
                             </button>
                         </div>
-                        <div class="col s6">
-                            <button class="waves-effect waves-light btn" onclick="printAndSave()" type="button">Send and Print
+
+                        <div class="col s4">
+                            <button class="waves-effect waves-light btn" id="printAndSave" type="submit">Send and Print
                                 <i class="material-icons right">local_printshop</i>
+                            </button>
+                        </div>
+
+                        <div class="col s4">
+                            <button class="waves-effect waves-light btn" onclick="clearForm()" type="button">Clear
+                                <i class="material-icons right">clear_all</i>
                             </button>
                         </div>
                     </div>
@@ -109,20 +169,21 @@
                     <img id="labelImage" src="" alt="label preview" style="border-style: solid;">
                 </div>
             </div>
+            <div>
+                <div id="snackbar">Successfully Submitted Data</div>
+            </div>
         </div>
         <script>
             //List of appliances provided by the dental team
-            const applianceType = ["1x1","3x3", "BAND AND LOOP", "BLEACH TRAYS", "CARRIERE", "DISTAL JET (SEND OUT)", "FLEA", "FLIPPER", "GELB", "DISTAL SHOE", "HALTERMAN","HAWLEY/U","HAWLEY/L","HAWLEY U/L","IDB","LBB","LEXAN","LEXAN SAME DAY","LLHA","MARA (SEND OUT)","MARA W/ IDB","MOUTHGUARD","NANCE","PEDO PARTIAL","PENDEX","PENDULUM","QUAD","REPAIR","RPE","RPE W/ RPHG HOOKS","RPE W/ CRIB","RYAN ALIGNER","SPACE MAINTAINER","SPLINT","SPRING/U","SPRING/L","SPRING U/L","SS ALIGNGERS (INITIAL)","SS ALIGNERS (REFINEMENT)","STUDY MODELS","THUMB CRIB","TPA","T-RET","T-REX (SEND OUT)","TPA W/RPHG","WRAP"]
-            const referenceNumber = 
             
             //initializing functiion. There are more scripts initialized in the attached script as well
             $(document).ready(function() {
-                populateAppliance();
-                M.updateTextFields();
+                //populateAppliance();
                 $('.datepicker').datepicker();
                 $('select').formSelect();
+                $('.timepicker').timepicker();
+                M.updateTextFields();
                 printupdate();
-                
             });
             
             //when any of the inputs are changed, we run the preview update function with the new data
@@ -133,61 +194,70 @@
                 printupdate();
             });
 
-            //A function that populates the appliance list so that it didnt have to be hard coded.
-            function populateAppliance(){
-                let selectString = "";
-                for(var i=0; i<applianceType.length;i++){
-                    selectString+= '<option value="'+applianceType[i]+'">'+applianceType[i]+'</option>'
-                }
-                $("#appliance_type").append(selectString);
-            }
-
             //The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
             $("#patientData").submit(function(e) {
                 e.preventDefault(); // <==stop page refresh==>
+                let whichButtonWasPressed = e.originalEvent.submitter.id;
+                console.log(whichButtonWasPressed);
+
                 saveDataToSheet();
-                console.log("Submitted");
+                if(whichButtonWasPressed == "printAndSave"){
+                    var printer = loadPrinters();
+                    if (!printer){return}
+                    testAddressLabelXml = updateXML();
+                    label = dymo.label.framework.openLabelXml(testAddressLabelXml);
+                    try
+                    {               
+                        label.print(printer);
+                    }
+                    catch(e)
+                    {
+                        alert(e.message || e);
+                        console.log(e.message)
+                    }
+                }
+                clearForm()
+                //console.log("Submitted");
             });
-
-            //this function is for the print button, it first saves the data, then prints it on the printer
-            function printAndSave(){
-                if(rejectIfBlanks()=="incomplete"){
-                    alert("Some required fields not filled out");
-                    return;
-                };
-                //some function here to save the data 
-                saveDataToSheet();
-
-                var printer = loadPrinters();
-                if (!printer){return}
-                testAddressLabelXml = updateXML();
-                label = dymo.label.framework.openLabelXml(testAddressLabelXml);
-                try
-                {               
-                    label.print(printer);
-                }
-                catch(e)
-                {
-                    alert(e.message || e);
-                    console.log(e.message)
-                }
-            }
 
             //some function here to save the form data to the google sheet
             function saveDataToSheet(){
                 let storageObject = convertDataToObject();
                 //function added here in google that calls the server and writes to the sheet
                 google.script.run
-                .withSuccessHandler(successfulStorage())
+                .withSuccessHandler(toastShow())
                 .withFailureHandler(function(){alert("Something Went Wrong: please check the executions log for more info")})
                 .submitTheData(storageObject);
             }
 
-            function successfulStorage(){
-              alert("Data Submitted Successfully");
-              location.reload();
-            }
-        </script>
+            function clearForm(){
+                $("#patient_name").val('').removeClass('active validate valid invalid').addClass('validate');
+                $("#staff_initials").val('').removeClass('active validate valid invalid').addClass('validate');
+                $("#lab_description").val('').removeClass('active validate valid invalid').addClass('validate');
 
+                $("#scan_date").val('').removeClass('active');
+                $("#scan_time").val('').removeClass('active');
+                $("#insert_date").val('').removeClass('active');
+
+                $("#doctor").val('Select Doctor');
+                $('#doctor').formSelect();
+                $("#appliance_type").val('Select Doctor');
+                $('#appliance_type').formSelect();
+
+                M.updateTextFields();
+
+                printupdate()
+            }
+
+            function toastShow() {
+            // Get the snackbar DIV
+                var x = document.getElementById("snackbar");
+                // Add the "show" class to DIV
+                x.className = "show";
+                // After 3 seconds, remove the show class from DIV
+                setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+            }
+            //https://stackoverflow.com/questions/499405/change-the-selected-value-of-a-drop-down-list-with-jquery
+        </script>
     </body>
 </html>
