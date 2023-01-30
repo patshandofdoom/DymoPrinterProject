@@ -12,6 +12,35 @@ function updateXML(){
     <DrawCommands>\
       <RoundRectangle X="0" Y="0" Width="3331" Height="5715" Rx="270" Ry="270"/>\
     </DrawCommands>\
+    \
+    <ObjectInfo>\
+    <TextObject>\
+      <Name>TEXT_3</Name>\
+      <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>\
+      <BackColor Alpha="0" Red="255" Green="255" Blue="255"/>\
+      <LinkedObjectName></LinkedObjectName>\
+      <Rotation>Rotation0</Rotation>\
+      <IsMirrored>False</IsMirrored>\
+      <IsVariable>False</IsVariable>\
+      <HorizontalAlignment>Center</HorizontalAlignment>\
+      <VerticalAlignment>Top</VerticalAlignment>\
+      <TextFitMode>None</TextFitMode>\
+      <UseFullFontHeight>True</UseFullFontHeight>\
+      <Verticalized>False</Verticalized>\
+      <StyledText>\
+        <Element>\
+        <String>'+document.getElementById('B').value+'\n'+
+        '</String>\
+          <Attributes>\
+            <Font Family="Arial" Size="18" Bold="true" Italic="False" Underline="False" Strikeout="False"/>\
+            <ForeColor Alpha="255" Red="0" Green="0" Blue="0"/>\
+          </Attributes>\
+        </Element>\
+      </StyledText>\
+    </TextObject>\
+    <Bounds X="0" Y="300" Width="5715" Height="3500"/>\
+    </ObjectInfo>\
+    \
     <ObjectInfo>\
       <TextObject>\
         <Name>TEXT_1</Name>\
@@ -29,7 +58,6 @@ function updateXML(){
         <StyledText>\
           <Element>\
                 <String>Time Stamp:\n\
-                Patient:\n\
                 Appl. Type:\n\
                 Description:\n\
                 Scan Date:\n\
@@ -43,7 +71,7 @@ function updateXML(){
           </Element>\
         </StyledText>\
       </TextObject>\
-      <Bounds X="350" Y="400" Width="1500" Height="3500"/>\
+      <Bounds X="350" Y="690" Width="1500" Height="3500"/>\
     </ObjectInfo>\
     <ObjectInfo>\
       <TextObject>\
@@ -62,7 +90,6 @@ function updateXML(){
         <StyledText>\
           <Element>\
           <String>'+document.getElementById('A').value+'\n'
-          +document.getElementById('B').value+'\n'
           +document.getElementById('C').value+'\n'
           +document.getElementById('D').value+'\n'
           +document.getElementById('E').value+'\n'
@@ -76,7 +103,7 @@ function updateXML(){
           </Element>\
         </StyledText>\
       </TextObject>\
-      <Bounds X="2000" Y="400" Width="3550" Height="3500"/>\
+      <Bounds X="2000" Y="690" Width="3550" Height="3500"/>\
     </ObjectInfo>\
     <ObjectInfo>\
       <ImageObject>\
