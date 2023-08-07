@@ -143,19 +143,25 @@
 
                     </div>
                     <div class="row col s12">
-                        <div class="col s4">
+                        <div class="col s3">
                             <button class="waves-effect waves-light btn" id="basicSubmit" type="submit">Send to Sheet
-                                <i class="material-icons right">send</i>
+                                <i class="material-icons right">move_to_inbox</i>
                             </button>
                         </div>
 
-                        <div class="col s4">
+                        <div class="col s3">
                             <button class="waves-effect waves-light btn" id="printAndSave" type="submit">Send and Print
                                 <i class="material-icons right">local_printshop</i>
                             </button>
                         </div>
 
-                        <div class="col s4">
+                        <div class="col s3">
+                            <button class="waves-effect waves-light btn" id="reprintButton" type="reprint" >Reprint
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+
+                        <div class="col s3">
                             <button class="waves-effect waves-light btn" onclick="clearForm()" type="button">Clear
                                 <i class="material-icons right">clear_all</i>
                             </button>
@@ -182,6 +188,7 @@
                 $('.datepicker').datepicker();
                 $('select').formSelect();
                 $('.timepicker').timepicker();
+                $('#reprintButton').removeClass("waves-effect waves-light submit").addClass('disabled');
                 M.updateTextFields();
                 printupdate();
             });
@@ -189,19 +196,23 @@
             //when any of the inputs are changed, we run the preview update function with the new data
             $("select").change(function() {
                 printupdate();
+                $('#reprintButton').removeClass("waves-effect waves-light submit").addClass('disabled');
             });
             $("input").change(function() {
                 printupdate();
+                $('#reprintButton').removeClass("waves-effect waves-light submit").addClass('disabled');
             });
 
             //The submit function compiles all the info into an object that will be sent to the google sheet to be stored.
             $("#patientData").submit(function(e) {
                 e.preventDefault(); // <==stop page refresh==>
                 let whichButtonWasPressed = e.originalEvent.submitter.id;
+                //based on which button was pressed, do one of 2 things
                 console.log(whichButtonWasPressed);
 
                 saveDataToSheet();
-                if(whichButtonWasPressed == "printAndSave"){
+                if(whichButtonWasPressed == "printAndSave"||whichButtonWasPressed == "reprintButton"){
+                    $('#reprintButton').removeClass('disabled').addClass("waves-effect waves-light submit");
                     var printer = loadPrinters();
                     if (!printer){return}
                     testAddressLabelXml = updateXML();
@@ -216,7 +227,6 @@
                         console.log(e.message)
                     }
                 }
-                clearForm()
                 //console.log("Submitted");
             });
 
@@ -235,6 +245,8 @@
                 $("#staff_initials").val('').removeClass('active validate valid invalid').addClass('validate');
                 $("#lab_description").val('').removeClass('active validate valid invalid').addClass('validate');
 
+                $('#reprintButton').removeClass('disabled').addClass("waves-effect waves-light submit");
+                
                 $("#scan_date").val('').removeClass('active');
                 $("#scan_time").val('').removeClass('active');
                 $("#insert_date").val('').removeClass('active');
